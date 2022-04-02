@@ -9,36 +9,23 @@ const RELATIVE_NEIGHBOUR_POSITIONS = [
     [1, 1],
 ];
 
-export const countNeighbours = (grid: boolean[], rows: number, cols: number) => {
-    const nextCycle = new Array(grid.length).fill(false);
-
-    grid.forEach((_, ind) => {
-        const [row, col] = getGridPositionByIndex(cols)(ind);
-        let neighbourCount = 0;
-        RELATIVE_NEIGHBOUR_POSITIONS.forEach(([relRow, relCol]) => {
-            if (isInBounds(rows, cols)(row + relRow, col + relCol)) {
-                const neighbourInd = getIndexByGridPosition(cols)(row + relRow, col + relCol);
-                neighbourCount += grid[neighbourInd] ? 1 : 0;
-            }
-        });
-        nextCycle[ind] = neighbourCount;
-    });
-
-    return nextCycle;
-}
-
 export const getNextCycle = (grid: boolean[], rows: number, cols: number) => {
+    const getGridPos = getGridPositionByIndex(cols);
+    const getInd = getIndexByGridPosition(cols);
+    const isInGrid = isInBounds(rows, cols);
+
     const nextCycle = new Array(grid.length).fill(false);
 
     grid.forEach((cell, ind) => {
-        const [row, col] = getGridPositionByIndex(cols)(ind);
+        const [row, col] = getGridPos(ind);
         let neighbourCount = 0;
         RELATIVE_NEIGHBOUR_POSITIONS.forEach(([relRow, relCol]) => {
-            if (isInBounds(rows, cols)(row + relRow, col + relCol)) {
-                const neighbourInd = getIndexByGridPosition(cols)(row + relRow, col + relCol);
+            if (isInGrid(row + relRow, col + relCol)) {
+                const neighbourInd = getInd(row + relRow, col + relCol);
                 neighbourCount += grid[neighbourInd] ? 1 : 0;
             }
         });
+
         nextCycle[ind] = shouldLive(cell)(neighbourCount);
     });
 
